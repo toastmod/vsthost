@@ -1,2 +1,2 @@
-# vstminihost
-VST mini-host for debugging purposes
+# vsthost
+A simple lightweight VST host.
