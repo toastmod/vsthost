@@ -33,6 +33,7 @@ mod event_gen;
 pub mod window;
 pub mod newwindow;
 pub mod winit_window;
+mod audioframe;
 
 #[derive(Default)]
 struct VstHost;
@@ -113,44 +114,51 @@ fn load<H: Host, P: AsRef<Path>>(
     loader.instance()
 }
 
-pub struct VSTSeat{
-    host: Arc<Mutex<VstHost>>,
-    instance: PluginInstance
+pub enum Method {
+    Path(String),
+    #[cfg(feature = "nfd-select")]
+    FileSelectDialog
 }
 
+// pub struct VSTSeat{
+//     host: Arc<Mutex<VstHost>>,
+//     instance: PluginInstance
+// }
+
 //-> (Producer<[u8;3]>, Consumer<f32>, Application)
-pub fn start_layout_vsthost() -> PluginInstance {
+pub fn create_vsthost(method: Method) -> Result<PluginInstance, PluginLoadError> {
 
     // LOAD PLUGIN
-
-    let args = std::env::args().collect::<Vec<_>>();
     let host = Arc::new(Mutex::new(VstHost));
 
-    let lol = match nfd::open_file_dialog(None,None) {
-        Ok(r) => {
-            match r {
-                Response::Okay(f) => {
-                    f
+    let path: String = match method {
+        Method::Path(p) => p,
+
+        #[cfg(feature = "nfd-select")]
+        Method::FileSelectDialog => {
+            match nfd::open_file_dialog(None,None) {
+                Ok(r) => {
+                    match r {
+                        Response::Okay(f) => {
+                            f
+                        }
+                        Response::OkayMultiple(fs) => {
+                            panic!("Too many picked!");
+                        }
+                        Response::Cancel => {
+                            panic!("Nothing picked!");
+                        }
+                    }
                 }
-                Response::OkayMultiple(fs) => {
-                    panic!("Too many picked!");
-                }
-                Response::Cancel => {
-                    panic!("Nothing picked!");
+                Err(e) => {
+                    panic!("{:?}",e);
                 }
             }
         }
-        Err(e) => {
-            panic!("{:?}",e);
-        }
     };
-    println!("{:?}",lol);
-    let mut instance = load(host, &lol).unwrap();
-    //let mut editor = instance.get_editor().unwrap();
 
-    println!("running application");
-
-    instance
+    println!("loading VST: {:?}",path);
+    load(host, &path)
 }
 
 // pub fn start_generator_vsthost() -> (Producer<[u8;3]>, Consumer<f32>, Box<Editor>) {
