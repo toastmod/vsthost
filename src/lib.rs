@@ -30,8 +30,6 @@ pub use vst::editor::Editor;
 
 mod host;
 mod event_gen;
-pub mod window;
-pub mod newwindow;
 pub mod winit_window;
 mod audioframe;
 
