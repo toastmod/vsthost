@@ -1,7 +1,7 @@
 # vsthost
 A simple VST host toolset.
 
-# About (note: this library is a big WIP)
+# About (note: this library is to be updated as I work on my DAW)
 The idea here is to provide a swiss army knife for VST hosting.<br>
 
 - `create_vsthost` to opens a VST given the path to the DLL/lib
