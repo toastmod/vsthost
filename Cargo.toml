@@ -7,7 +7,7 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-vst = { git = "https://github.com/RustAudio/vst-rs.git" }
+vst = { git = "https://github.com/toastmod/vst-rs.git" }
 #vst2-sys = "0.2.0"
 #tuix = { git = "https://github.com/geom3trik/tuix.git", branch = "without_send" }
 nfd = {version = "0.0.4", optional = true }
